@@ -34,6 +34,7 @@ class MarvelService {
 
     // eslint-disable-next-line class-methods-use-this
     _transformCharacter = (char) => ({
+        id: char.id,
         name: char.name,
         description: char.description,
         thumbnail: `${char.thumbnail.path}.${char.thumbnail.extension}`,

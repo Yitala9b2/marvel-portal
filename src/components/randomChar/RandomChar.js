@@ -8,14 +8,18 @@ import MarvelService from '../../services/MarvelService';
 class RandomChar extends Component {
     constructor(props) {
         super(props);
-        this.updateChar();
         this.state = {
             char: {},
             loading: true,
             error: false,
+            imgStyle: { objectFit: 'cover' },
         };
     }
 
+
+    componentDidMount() {
+        this.updateChar();
+    }
 
     marvelService = new MarvelService();
 
@@ -25,9 +29,18 @@ class RandomChar extends Component {
             // eslint-disable-next-line no-param-reassign
             char.description = 'Пока нет описания этого героя ';
         }
+        if (char.thumbnail.indexOf('image_not_available') !== -1) {
+            this.setState({ imgStyle: { objectFit: 'contain' } });
+        } else { this.setState({ imgStyle: { objectFit: 'cover' } }); }
+
         this.shortString(char);
         this.setState({ char, loading: false });
     };
+
+    onCharLoading = () => {
+        this.setState({ loading: true });
+    };
+
 
     onError = () => {
         this.setState({
@@ -44,6 +57,7 @@ class RandomChar extends Component {
 
     updateChar = () => {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000); // берем рандомного персонажа
+        this.onCharLoading();
         this.marvelService
             .getCharacter(id)
             .then(this.onCharLoaded)
@@ -51,12 +65,13 @@ class RandomChar extends Component {
     };
 
 
+
+
     render() {
-        const { char, loading, error } = this.state;
+        const { char, loading, error, imgStyle } = this.state;
         const errorMessage = error ? <ErrorMessage/> : null;
         const spinner = loading ? <Spinner/> : null;
-        const content = !(loading || error) ? <View char = { char }/> : null;
-
+        const content = !(loading || error) ? <View imgStyle = {imgStyle} char = { char }/> : null;
         return (
             <div className="randomchar">
                 { errorMessage }
@@ -75,16 +90,16 @@ class RandomChar extends Component {
                     </button>
                     <img src={mjolnir} alt="mjolnir" className="randomchar__decoration"/>
                 </div>
-            </div>);
+            </div>
+        );
     }
 }
 
-const View = ({ char }) => {
+const View = ({ char, imgStyle }) => {
     const { name, description, thumbnail, homepage, wiki } = char;
-
     return (
         <div className="randomchar__block">
-            <img src={thumbnail} alt="Random character" className="randomchar__img"/>
+            <img src={thumbnail} alt="Random character" className="randomchar__img" style= { imgStyle }/>
             <div className="randomchar__info">
                 <p className="randomchar__name">{name}</p>
                 <p className="randomchar__descr">
