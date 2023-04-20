@@ -51,13 +51,14 @@ class CharList extends Component {
             // eslint-disable-next-line keyword-spacing
             let imgStyle;
             if (item.thumbnail.indexOf('image_not_available') !== -1) {
-                imgStyle = { objectFit: 'contain' };
+                imgStyle = { objectFit: 'fill' };
             } else {
                 imgStyle = { objectFit: 'cover' };
             }
             return (
 
-                <li className="char__item" key={item.id}>
+                <li className="char__item" key={item.id}
+                    onClick = {() => this.props.onCharSelect(item.id)}>
                     <img src={item.thumbnail} alt={item.name} style = {imgStyle}/>
                     <div className="char__name">{item.name}</div>
                 </li>
@@ -84,7 +85,7 @@ class CharList extends Component {
                 {spinner}
                 {content}
                 <button className="button button__main button__long">
-                    <div className="inner">load more</div>
+                    <div className="inner">показать еще</div>
                 </button>
             </div>
         );

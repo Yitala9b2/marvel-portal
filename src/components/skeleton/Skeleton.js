@@ -2,7 +2,7 @@ import './skeleton.scss';
 
 const Skeleton = () => (
     <>
-        <p className="char__select">Please select a character to see information</p>
+        <p className="char__select">Пожалуйста, выберите персонажа, чтобы просмотреть информацию</p>
         <div className="skeleton">
             <div className="pulse skeleton__header">
                 <div className="pulse skeleton__circle"></div>

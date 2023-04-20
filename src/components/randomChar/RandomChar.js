@@ -30,7 +30,7 @@ class RandomChar extends Component {
             char.description = 'Пока нет описания этого героя ';
         }
         if (char.thumbnail.indexOf('image_not_available') !== -1) {
-            this.setState({ imgStyle: { objectFit: 'contain' } });
+            this.setState({ imgStyle: { objectFit: 'fill' } });
         } else { this.setState({ imgStyle: { objectFit: 'cover' } }); }
 
         this.shortString(char);
@@ -79,14 +79,14 @@ class RandomChar extends Component {
                 { content }
                 <div className="randomchar__static">
                     <p className="randomchar__title">
-                    Random character for today!<br/>
-                    Do you want to get to know him better?
+                    Генератор случайного персонажа!<br/>
+                    Хотите узнать о нем больше?
                     </p>
                     <p className="randomchar__title">
-                    Or choose another one
+                    Или выбрать другого
                     </p>
                     <button onClick = {this.updateChar} className="button button__main">
-                        <div className="inner">try it</div>
+                        <div className="inner">Попробуйте</div>
                     </button>
                     <img src={mjolnir} alt="mjolnir" className="randomchar__decoration"/>
                 </div>
@@ -107,10 +107,10 @@ const View = ({ char, imgStyle }) => {
                 </p>
                 <div className="randomchar__btns">
                     <a href= {homepage} className="button button__main">
-                        <div className="inner">homepage</div>
+                        <div className="inner">Перейти</div>
                     </a>
                     <a href={wiki} className="button button__secondary">
-                        <div className="inner">Wiki</div>
+                        <div className="inner">Вики</div>
                     </a>
                 </div>
             </div>
