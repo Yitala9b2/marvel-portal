@@ -25,10 +25,16 @@ class App extends Component {
             <div className="app">
                 <AppHeader/>
                 <main>
-                    <RandomChar/>
+                    <ErrorBoundary>
+                        <RandomChar/>
+                    </ErrorBoundary>
                     <div className="char__content">
+
                         {/* забираем id */}
-                        <CharList onCharSelect = { this.onCharSelectedHandler }/>
+                        <ErrorBoundary>
+                            <CharList onCharSelect = { this.onCharSelectedHandler }/>
+                        </ErrorBoundary>
+
                         {/* передаем id */}
                         <ErrorBoundary>
                             <CharInfo charId = { this.state.selectedChar }/>

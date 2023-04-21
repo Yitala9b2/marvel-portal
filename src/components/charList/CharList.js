@@ -1,6 +1,6 @@
 import './charList.scss';
 import { Component } from 'react';
-import abyss from '../../resources/img/abyss.jpg';
+
 import Spinner from '../spinner/spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import MarvelService from '../../services/MarvelService';
@@ -12,7 +12,15 @@ class CharList extends Component {
             chars: [],
             loading: true,
             error: false,
+            newItemLoading: false,
+            offset: 0,
         };
+    }
+
+    marvelService = new MarvelService();
+
+    componentDidMount() {
+        this.onRequestHandler();
     }
 
     onCharsLoading = () => {
@@ -26,15 +34,25 @@ class CharList extends Component {
             error: true });
     };
 
-    componentDidMount() {
-        this.updateChars();
-    }
 
-    marvelService = new MarvelService();
 
-    onCharsLoaded = (chars) => {
-        this.setState({ chars, loading: false });
+    onRequestHandler = (offset) => {
+        this.onCharListLoading();
+        this.marvelService
+            .getAllCharacters(offset)
+            .then(this.onCharsLoaded)
+            .catch(this.onError);
     };
+
+
+    // при клике на показать еще меняется state newItemLoading
+    onCharListLoading = () => {
+        this.setState({
+            newItemLoading: true,
+        });
+    };
+
+
 
     updateChars = () => {
         this.onCharsLoading();
@@ -43,6 +61,17 @@ class CharList extends Component {
             .then(this.onCharsLoaded)
             .catch(this.onError);
     };
+
+    onCharsLoaded = (newChars) => {
+        this.setState(({ offset, chars }) => ({
+            chars: [...chars, ...newChars],
+            loading: false,
+            newItemLoading: false,
+            offset: offset + 9,
+        }));
+    };
+
+
 
     // eslint-disable-next-line class-methods-use-this
     renderItems = (arr) => {
@@ -56,7 +85,6 @@ class CharList extends Component {
                 imgStyle = { objectFit: 'cover' };
             }
             return (
-
                 <li className="char__item" key={item.id}
                     onClick = {() => this.props.onCharSelect(item.id)}>
                     <img src={item.thumbnail} alt={item.name} style = {imgStyle}/>
@@ -74,7 +102,7 @@ class CharList extends Component {
 
 
     render() {
-        const { chars, loading, error } = this.state;
+        const { chars, loading, error, newItemLoading, offset } = this.state;
         const items = this.renderItems(chars);
         const errorMessage = error ? <ErrorMessage/> : null;
         const spinner = loading ? <Spinner/> : null;
@@ -84,7 +112,10 @@ class CharList extends Component {
                 {errorMessage}
                 {spinner}
                 {content}
-                <button className="button button__main button__long">
+                <button className="button button__main button__long"
+                    disabled = { newItemLoading }
+                    onClick = { () => this.onRequestHandler(offset) }
+                >
                     <div className="inner">показать еще</div>
                 </button>
             </div>

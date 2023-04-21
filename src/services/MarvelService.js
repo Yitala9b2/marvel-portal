@@ -6,6 +6,8 @@ class MarvelService {
 
     _apiKey = 'apikey=97f5a52a2a73fdc86ffa7ea3c6417008';
 
+    _baseOffset = 0;
+
     // eslint-disable-next-line class-methods-use-this
     getResource = async (url) => {
         const res = await fetch(url);
@@ -17,9 +19,10 @@ class MarvelService {
     };
 
     // берем всех персонажей
-    getAllCharacters = async () => {
+    // eslint-disable-next-line no-underscore-dangle
+    getAllCharacters = async (offset = this._baseOffset) => {
         // eslint-disable-next-line no-underscore-dangle
-        const res = await this.getResource(`${this._apiBase}characters?limit=9&${this._apiKey}`);
+        const res = await this.getResource(`${this._apiBase}characters?limit=9&offset=${offset}&${this._apiKey}`);
         // eslint-disable-next-line no-underscore-dangle
         return res.data.results.map(this._transformCharacter);
     };
