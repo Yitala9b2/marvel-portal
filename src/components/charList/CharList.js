@@ -1,5 +1,6 @@
 import './charList.scss';
 import { Component } from 'react';
+import PropTypes from 'prop-types';
 
 import Spinner from '../spinner/spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
@@ -95,7 +96,6 @@ class CharList extends Component {
 
     render() {
         const { chars, loading, error, newItemLoading, offset, charEnded } = this.state;
-        console.log(offset)
         const items = this.renderItems(chars);
         const errorMessage = error ? <ErrorMessage/> : null;
         const spinner = loading ? <Spinner/> : null;
@@ -116,5 +116,10 @@ class CharList extends Component {
         );
     }
 }
+
+
+CharList.propTypes = {
+    onCharSelect: PropTypes.func,
+};
 
 export default CharList;
