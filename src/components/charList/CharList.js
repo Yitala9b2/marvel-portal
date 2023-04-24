@@ -1,5 +1,5 @@
 import './charList.scss';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 import Spinner from '../spinner/spinner';
@@ -16,6 +16,19 @@ class CharList extends Component {
         charEnded: false,
     };
 
+    itemRefs = [];
+
+    setRef = (ref) => {
+        this.itemRefs.push(ref);
+    };
+
+    focusOnItem = (id) => {
+        this.itemRefs.forEach((item) => item.classList.remove('char__item_selected'));
+        this.itemRefs[id].classList.add('char__item_selected');
+        this.itemRefs[id].focus();
+    };
+
+
     marvelService = new MarvelService();
 
     componentDidMount() {
@@ -30,7 +43,8 @@ class CharList extends Component {
     onError = () => {
         this.setState({
             loading: false,
-            error: true });
+            error: true,
+        });
     };
 
 
@@ -70,7 +84,7 @@ class CharList extends Component {
 
 
     renderItems = (arr) => {
-        const items = arr.map((item) => {
+        const items = arr.map((item, i) => {
             let imgStyle;
             if (item.thumbnail.indexOf('image_not_available') !== -1) {
                 imgStyle = { objectFit: 'fill' };
@@ -79,8 +93,13 @@ class CharList extends Component {
             }
             return (
                 <li className="char__item" key={item.id}
-                    onClick = {() => this.props.onCharSelect(item.id)}>
-                    <img src={item.thumbnail} alt={item.name} style = {imgStyle}/>
+                    // eslint-disable-next-line no-return-assign
+                    ref={this.setRef}
+                    onClick={() => {
+                        this.focusOnItem(i);
+                        this.props.onCharSelect(item.id);
+                    }}>
+                    <img src={item.thumbnail} alt={item.name} style={imgStyle} />
                     <div className="char__name">{item.name}</div>
                 </li>
             );
@@ -97,8 +116,8 @@ class CharList extends Component {
     render() {
         const { chars, loading, error, newItemLoading, offset, charEnded } = this.state;
         const items = this.renderItems(chars);
-        const errorMessage = error ? <ErrorMessage/> : null;
-        const spinner = loading ? <Spinner/> : null;
+        const errorMessage = error ? <ErrorMessage /> : null;
+        const spinner = loading ? <Spinner /> : null;
         const content = !(loading || error) ? items : null;
         return (
             <div className="char__list">
@@ -106,9 +125,9 @@ class CharList extends Component {
                 {spinner}
                 {content}
                 <button className="button button__main button__long"
-                    disabled = { newItemLoading }
-                    style = {{ display: charEnded ? 'none' : 'block' }}
-                    onClick = { () => this.onRequestHandler(offset) }
+                    disabled={newItemLoading}
+                    style={{ display: charEnded ? 'none' : 'block' }}
+                    onClick={() => this.onRequestHandler(offset)}
                 >
                     <div className="inner">показать еще</div>
                 </button>
