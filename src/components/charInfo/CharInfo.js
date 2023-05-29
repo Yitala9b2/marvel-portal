@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
 import './charInfo.scss';
@@ -8,76 +8,96 @@ import Skeleton from '../skeleton/Skeleton';
 import MarvelService from '../../services/MarvelService';
 
 
-class CharInfo extends Component {
-    state = {
-        char: null,
-        loading: false,
-        error: false,
-        imgStyle: { objectFit: 'cover' },
-    };
+const CharInfo = (props) => {
+    const [char, setChar] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
+    const [imgStyle, setImgStyle] = useState({ objectFit: 'cover' });
 
-    marvelService = new MarvelService();
+    // state = {
+    //     char: null,
+    //     loading: false,
+    //     error: false,
+    //     imgStyle: { objectFit: 'cover' },
+    // };
 
-    componentDidMount() {
-        this.updateChar();
-    }
+    const marvelService = new MarvelService();
 
-    componentDidUpdate(prevProps, prevState) {
-        if (this.props.charId !== prevProps.charId) {
-            this.updateChar();
-        }
-    }
+    useEffect(() => {
+        updateChar();
+    }, [props.charId]);
+
+    // componentDidMount() {
+    //    this.updateChar();
+    // }
+
+    // componentDidUpdate(prevProps, prevState) {
+    //    if (this.props.charId !== prevProps.charId) {
+    //        this.updateChar();
+    //    }
+    // }
 
 
-    updateChar = () => {
-        const { charId } = this.props;
+    const updateChar = () => {
+        const { charId } = props;
         if (!charId) {
             return;
         }
-        this.onCharLoading();
-        this.marvelService.getCharacter(charId)
-            .then(this.onCharLoaded)
-            .catch(this.onError);
+        onCharLoading();
+        marvelService.getCharacter(charId)
+            .then(onCharLoaded)
+            .catch(onError);
     };
 
-    onCharLoaded = (char) => {
+    // eslint-disable-next-line no-shadow
+    const onCharLoaded = (char) => {
         if (char.thumbnail.indexOf('image_not_available') !== -1) {
-            this.setState({ imgStyle: { objectFit: 'fill' } });
-        } else { this.setState({ imgStyle: { objectFit: 'cover' } }); }
-        this.setState({
-            char,
-            loading: false,
-        });
+            setImgStyle({ objectFit: 'fill' });
+        } else {
+            setImgStyle({ objectFit: 'cover' });
+        }
+        setChar(char);
+        setLoading(false);
+        // this.setState({
+        //    char,
+        //    loading: false,
+        // });
     };
 
-    onError = () => {
-        this.setState({
-            loading: false,
-            error: true });
+    const onError = () => {
+        setLoading(false);
+        setError(true);
+
+        //  this.setState({
+        //        loading: false,
+        //        error: true });
     };
 
-    onCharLoading = () => {
-        this.setState({ loading: true });
+    const onCharLoading = () => {
+        setLoading(true);
+        // this.setState({ loading: true });
     };
 
-    render() {
-        const { char, loading, error, imgStyle } = this.state;
+    const skeleton = char || loading || error ? null : <Skeleton />;
+    const errorMessage = error ? <ErrorMessage /> : null;
+    const spinner = loading ? <Spinner /> : null;
+    const content = !(loading || error || !char) ? <View imgStyle={imgStyle} char={char} /> : null;
 
-        const skeleton = char || loading || error ? null : <Skeleton/>;
-        const errorMessage = error ? <ErrorMessage/> : null;
-        const spinner = loading ? <Spinner/> : null;
-        const content = !(loading || error || !char) ? <View imgStyle = {imgStyle} char = { char }/> : null;
+    return (
+    // const { char, loading, error, imgStyle } = this.state;
+    // const skeleton = char || loading || error ? null : <Skeleton/>;
+    // const errorMessage = error ? <ErrorMessage/> : null;
+    // const spinner = loading ? <Spinner/> : null;
+    // const content = !(loading || error || !char) ? <View imgStyle = {imgStyle} char = { char }/> : null;
 
-        return (
-            <div className="char__info">
-                {skeleton}
-                {errorMessage}
-                {spinner}
-                {content}
-            </div>
-        );
-    }
-}
+        <div className="char__info">
+            {skeleton}
+            {errorMessage}
+            {spinner}
+            {content}
+        </div>
+    );
+};
 
 // eslint-disable-next-line arrow-body-style
 const View = ({ char, imgStyle }) => {
@@ -85,7 +105,7 @@ const View = ({ char, imgStyle }) => {
     return (
         <>
             <div className="char__basics">
-                <img src={thumbnail} alt="abyss" style = {imgStyle}/>
+                <img src={thumbnail} alt="abyss" style={imgStyle} />
                 <div>
                     <div className="char__info-name">{name}</div>
                     <div className="char__btns">
@@ -108,7 +128,7 @@ const View = ({ char, imgStyle }) => {
                     // eslint-disable-next-line arrow-body-style
                     comics.map((item, i) => {
                         return (
-                            <li key = {i} className="char__comics-item">
+                            <li key={i} className="char__comics-item">
                                 {item.name}
                             </li>
                         );

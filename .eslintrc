@@ -20,6 +20,7 @@
         "no-unused-expressions":"warn",
         "prefer-destructuring":"warn",
         "no-mixed-operators":"off",
+        //"no-shadow":"warn",
         "linebreak-style": [0 ,"error", "windows"],
         "no-multiple-empty-lines":"off",
         "max-classes-per-file":"off",
