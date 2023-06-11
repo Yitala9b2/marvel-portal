@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 
 import Spinner from '../spinner/spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 
 const CharList = (props) => {
     const [chars, setChars] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(false);
+    // const [loading, setLoading] = useState(true);
+    // const [error, setError] = useState(false);
     const [newItemLoading, setNewItemLoading] = useState(false);
     const [offset, setOffset] = useState(0);
     const [charEnded, setCharEnded] = useState(false);
@@ -28,11 +28,12 @@ const CharList = (props) => {
     };
 
 
-    const marvelService = new MarvelService();
+    // const marvelService = useMarvelService();
+    const { loading, error, getAllCharacters } = useMarvelService();
 
 
     useEffect(() => {
-        onRequestHandler();
+        onRequestHandler(offset, true);
     }, []);
 
 
@@ -40,7 +41,7 @@ const CharList = (props) => {
     //    this.onRequestHandler();
     // }
 
-    const onCharsLoading = () => {
+    /* const onCharsLoading = () => {
         setLoading(true);
         // this.setState({ loading: true });
     };
@@ -54,23 +55,22 @@ const CharList = (props) => {
         //    loading: false,
         //    error: true,
         // });
-    };
+    }; */
 
 
 
     // eslint-disable-next-line no-shadow
-    const onRequestHandler = (offset) => {
-        onCharListLoading();
-        marvelService
-            .getAllCharacters(offset)
-            .then(onCharsLoaded)
-            .catch(onError);
+    const onRequestHandler = (offset, initial) => {
+        initial ? onCharListLoading(false) : onCharListLoading(true);
+        getAllCharacters(offset)
+            .then(onCharsLoaded);
+        // .catch(onError);
     };
 
 
     // при клике на показать еще меняется state newItemLoading
-    const onCharListLoading = () => {
-        setNewItemLoading(true);
+    const onCharListLoading = (bool) => {
+        setNewItemLoading(bool);
         // this.setState({
         //    newItemLoading: true,
         // });
@@ -85,7 +85,7 @@ const CharList = (props) => {
         }
         // eslint-disable-next-line no-shadow
         setChars((chars) => [...chars, ...newChars]);
-        setLoading(false);
+        // setLoading(false);
         setNewItemLoading(false);
         // eslint-disable-next-line no-shadow
         setOffset((offset) => offset + 9);
@@ -99,7 +99,6 @@ const CharList = (props) => {
         //    charEnded: ended,
         // }));
     };
-
 
 
     const renderItems = (arr) => {
@@ -137,13 +136,13 @@ const CharList = (props) => {
     const items = renderItems(chars);
 
     const errorMessage = error ? <ErrorMessage /> : null;
-    const spinner = loading ? <Spinner /> : null;
-    const content = !(loading || error) ? items : null;
+    const spinner = loading && !newItemLoading ? <Spinner /> : null;
+    // const content = !(loading || error) ? items : null;
     return (
         <div className="char__list">
             {errorMessage}
             {spinner}
-            {content}
+            {items}
             <button className="button button__main button__long"
                 disabled={newItemLoading}
                 style={{ display: charEnded ? 'none' : 'block' }}

@@ -5,13 +5,13 @@ import './charInfo.scss';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import Spinner from '../spinner/spinner';
 import Skeleton from '../skeleton/Skeleton';
-import MarvelService from '../../services/MarvelService';
+import useMarvelService from '../../services/MarvelService';
 
 
 const CharInfo = (props) => {
     const [char, setChar] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(false);
+    // const [loading, setLoading] = useState(false);
+    // const [error, setError] = useState(false);
     const [imgStyle, setImgStyle] = useState({ objectFit: 'cover' });
 
     // state = {
@@ -21,7 +21,8 @@ const CharInfo = (props) => {
     //     imgStyle: { objectFit: 'cover' },
     // };
 
-    const marvelService = new MarvelService();
+    // const marvelService = new MarvelService();
+    const { loading, error, getCharacter, clearError } = useMarvelService();
 
     useEffect(() => {
         updateChar();
@@ -39,14 +40,15 @@ const CharInfo = (props) => {
 
 
     const updateChar = () => {
+        clearError();
         const { charId } = props;
         if (!charId) {
             return;
         }
-        onCharLoading();
-        marvelService.getCharacter(charId)
-            .then(onCharLoaded)
-            .catch(onError);
+        // onCharLoading();
+        getCharacter(charId)
+            .then(onCharLoaded);
+        // .catch(onError);
     };
 
     // eslint-disable-next-line no-shadow
@@ -57,14 +59,14 @@ const CharInfo = (props) => {
             setImgStyle({ objectFit: 'cover' });
         }
         setChar(char);
-        setLoading(false);
+        // setLoading(false);
         // this.setState({
         //    char,
         //    loading: false,
         // });
     };
 
-    const onError = () => {
+    /* const onError = () => {
         setLoading(false);
         setError(true);
 
@@ -76,7 +78,7 @@ const CharInfo = (props) => {
     const onCharLoading = () => {
         setLoading(true);
         // this.setState({ loading: true });
-    };
+    }; */
 
     const skeleton = char || loading || error ? null : <Skeleton />;
     const errorMessage = error ? <ErrorMessage /> : null;
