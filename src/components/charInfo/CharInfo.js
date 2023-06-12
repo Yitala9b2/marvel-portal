@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 
 import './charInfo.scss';
@@ -79,6 +79,31 @@ const CharInfo = (props) => {
         setLoading(true);
         // this.setState({ loading: true });
     }; */
+    const charContainer = useRef();
+
+    const checkOffset = () => {
+        function getRectTop(el) {
+            // находим координату верха элемента по y
+            const rect = el.getBoundingClientRect();
+            return rect.top;
+        }
+        // (если координата верха(от блока до верха браузера) + количество прокрученных пикселей) + высота элемента >= (координата футера + количество прокрученных пикселей)
+        if (getRectTop(charContainer.current) >= 0) {
+            charContainer.current.style.position = 'relative';
+        }
+        if (getRectTop(charContainer.current) < 0) {
+            charContainer.current.style.position = 'sticky';
+            charContainer.current.style.top = 0;
+        } // restore when you scroll up
+    };
+
+    useEffect(() => {
+        window.addEventListener('scroll', checkOffset);
+        return () => {
+            window.removeEventListener('scroll', checkOffset);
+        };
+    }, []);
+
 
     const skeleton = char || loading || error ? null : <Skeleton />;
     const errorMessage = error ? <ErrorMessage /> : null;
@@ -92,7 +117,7 @@ const CharInfo = (props) => {
     // const spinner = loading ? <Spinner/> : null;
     // const content = !(loading || error || !char) ? <View imgStyle = {imgStyle} char = { char }/> : null;
 
-        <div className="char__info">
+        <div ref={charContainer} className="char__info">
             {skeleton}
             {errorMessage}
             {spinner}

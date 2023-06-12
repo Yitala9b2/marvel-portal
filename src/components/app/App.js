@@ -1,45 +1,23 @@
-import { useState } from 'react';
+
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { MainPage, ComicsPage, Page404 } from '../pages';
+// eslint-disable-next-line import/extensions
 import AppHeader from '../appHeader/AppHeader';
-import RandomChar from '../randomChar/RandomChar';
-import CharList from '../charList/CharList';
-import CharInfo from '../charInfo/CharInfo';
-import ErrorBoundary from '../errorBoundary/ErrorBoundary';
-import ComicsList from '../comicsList/ComicsList';
-import AppBanner from '../appBanner/AppBanner';
-import decoration from '../../resources/img/vision.png';
 
-const App = () => {
-    const [selectedChar, setChar] = useState(null);
-
-
-    // подъем состояния id наверх
-    const onCharSelectedHandler = (id) => {
-        setChar(id);
-    };
-
-    return (
+const App = () => (
+    <Router>
         <div className="app">
             <AppHeader />
             <main>
-                { /* <ErrorBoundary>
-                    <RandomChar />
-                </ErrorBoundary>
-                <div className="char__content"> */ }
-
-                {/* забираем id */}
-                {/* <ErrorBoundary>
-                        <CharList onCharSelect={onCharSelectedHandler} />
-                    </ErrorBoundary> */}
-                {/* передаем id */}
-                {/* <ErrorBoundary>
-                        <CharInfo charId={selectedChar} />
-                    </ErrorBoundary>
-                </div>
-                <img className="bg-decoration" src={decoration} alt="vision" /> */}
-                <AppBanner/>
-                <ComicsList/>
+                <Routes>
+                    <Route path="/marvel-portal" element={<MainPage/>}/>
+                    <Route path="/marvel-portal/comics" element={<ComicsPage/>}/>
+                    <Route path="*" element={<Page404 />} />
+                </Routes>
             </main >
         </div >
-    );
-};
+    </Router>
+);
+
 export default App;
